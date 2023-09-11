@@ -1,45 +1,71 @@
-
+/**
+ * Cette fonction affiche dans la console le score de l'utilisateur
+ * @param {number} score : le score de l'utilisateur
+ * @param {number} qtsNb : le nombre de mots proposés à l'utilisateur
+ */
 function displayScore(score, qtsNb){
-	//local var
-	let message = "Votre score est de " + score + " sur " + qtsNb
-	return message
+	//get the zone where we write the score
+	let spanScore = document.querySelector(".zoneScore span")
+	//writing text
+	let affichageScore = `${score} / ${qtsNb}`
+	//insert text into span
+	spanScore.innerText = affichageScore
 }
 
-function chooseWordsOrSentences(){
-	let choix = prompt("Faites le choix entre mots ou phrases")
-	while (choix !== "mots" && choix !== "phrases")
-		choix = prompt("Faites le choix entre mots ou phrases")
-	return choix
 
+function displayProp(word){
+	let zoneProp = document.querySelector(".zoneProposition")
+	zoneProp.innerText = word
 }
 
-function launchGameLoop(liste){
-	let score = 0;
-	for (let i = 0; i < liste.length; i++)
-	{
-		motUtilisateur = prompt("Entrez le mot: " + liste[i])
-		if (motUtilisateur === liste[i])
-		{
-			score++
-		}
-	}
-	return score
-}
-
-//main function to start the game
+/**
+ * Cette fonction lance le jeu.
+ * Elle demande à l'utilisateur de choisir entre "mots" et "phrases" et lance la boucle de jeu correspondante
+ */
 function launchGame(){
-	let choice = chooseWordsOrSentences()
 	let score = 0;
-	let nbQts = 0;
-	if (choice === "mots")
-	{
-		score = launchGameLoop(listeMots)
-		nbQts = listeMots.length
+	let i = 0;
+	let listeProp = listeMots
+
+	let boutonValidation = document.getElementById("btnValidateWord")
+	let inputEcriture = document.getElementById("inputEcriture")
+
+	displayProp(listeProp[i])
+	
+	//Gestion de l'événement click sur le bouton valider
+	boutonValidation.addEventListener("click", () => {
+		console.log(inputEcriture.value)
+		if (inputEcriture.value === listeProp[i])
+			score++
+		i++;
+		displayScore(score, i)
+		inputEcriture.value = ''
+		if (listeProp[i] === undefined){
+			displayProp("Le jeu est fini!")
+			boutonValidation.disabled = true
+		}
+		else {
+			displayProp(listeProp[i])
+
+		}
+	})
+
+	//Gestion de l'événement change sur les boutons radios
+	let listBtnRadio = document.querySelectorAll(".optionSource input")
+	for (let index = 0; index < listBtnRadio.length; index++) {
+		listBtnRadio[index].addEventListener("change", (event) => { //dans event store l'information si c'est le bouton de droite ou gauche qui a été cliqué
+			//Si c'est le premier élément qui a été modifié, alors nous voulons
+			//jouer avec la listeMots
+			if (event.target.value === "1") { //target est la propriété où l'info est stocké, puis il faut juste appeler value
+				listeProp = listeMots
+			}
+			else {
+				listeProp = listePhrase
+			}
+			//et on modifie l'affichage en direct
+			displayProp(listeProp[i])
+		})
 	}
-	else //(motUtilisateur === "phrases")
-	{
-		score = launchGameLoop(listePhrase)
-		nbQts = listePhrase.length
-	}
-	console.log(displayScore(score, nbQts))
+
+	displayScore(score, i)
 }
