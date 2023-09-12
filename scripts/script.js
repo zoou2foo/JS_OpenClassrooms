@@ -37,6 +37,64 @@ function displayEmail(nom, email, score) {
 }
 
 
+/**
+ * Takes a name in param and validate if it's in the correct format
+ * here: 2 characters minimum
+ * @param {string} nom 
+ * @returns {boolean}
+ */
+function validerNom(nom){
+	if (nom.length < 2)
+		throw new Error(`Le nom: ${nom}, est trop petit`)
+}
+
+
+/**
+ * Takes an email in param and validate if it's in the correct format
+ * @param {string} email 
+ * @returns {boolean}
+ */
+function validerEmail(email) {
+	let emailRegExp = new RegExp("[a-z0-9.-_]+@[a-z0-9._-]+\\.[a-z0-9._-]+")
+	if (!emailRegExp.test(email))
+		throw new Error(`Le courriel ${email} est invalide`)
+}
+
+
+function afficherMessageErreur(erreur) {
+	let spanErreurMsg = document.getElementById("erreurMessage")
+
+	if (!spanErreurMsg) {
+		let popup = document.querySelector(".popup")
+		spanErreurMsg = document.createElement("span")
+		spanErreurMsg.id = "erreurMessage"
+
+		popup.append(spanErreurMsg)
+	}
+	spanErreurMsg.innerText = erreur
+}
+
+
+/**
+ * Focus on dealing with the form
+ * @param {string} score 
+ */
+function gererFormulaire(score) {
+	try {
+		let baliseNom = document.getElementById("nom")
+		let nom = baliseNom.value
+		validerNom(nom)
+		let baliseEmail = document.getElementById("email")
+		let email = baliseEmail.value
+		validerEmail(email)
+		afficherMessageErreur("")
+		displayEmail(nom, email, score)
+	}
+	catch (erreur){
+		afficherMessageErreur(erreur.message)
+	}
+
+}
 
 /**
  * Cette fonction lance le jeu.
@@ -44,7 +102,7 @@ function displayEmail(nom, email, score) {
  */
 function launchGame(){
 	
-	//initAddEventListenerPopup()
+	initAddEventListenerPopup()
 	let score = 0;
 	let i = 0;
 	let listeProp = listeMots
@@ -88,20 +146,11 @@ function launchGame(){
 			displayProp(listeProp[i])
 		})
 	}
-
 	let form = document.querySelector("form")
 	form.addEventListener("submit", (event) => {
 		event.preventDefault()
-
-		let baliseNom = document.getElementById("nom")
-		let nom = baliseNom.value
-		let baliseEmail = document.getElementById("email")
-		let email = baliseEmail.value
-
 		let scoreEmail = `${score} / ${i}`
-		displayEmail(nom, email, scoreEmail)
-
+		gererFormulaire(score)
 	})
-
 	displayScore(score, i)
 }
