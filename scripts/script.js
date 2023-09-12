@@ -13,16 +13,38 @@ function displayScore(score, qtsNb){
 }
 
 
+/**
+ * Function to display proposition. What the player will need to recopy
+ * in the zoneProp
+ * @param {string} word 
+ */
 function displayProp(word){
 	let zoneProp = document.querySelector(".zoneProposition")
 	zoneProp.innerText = word
 }
+
+
+
+/**
+ * Generate and display email
+ * @param {string} nom 
+ * @param {string} email 
+ * @param {string} score 
+ */
+function displayEmail(nom, email, score) {
+	let mailto = `mailto:${email}?subject=Partage du score Azerty&body=Salut, je suis ${nom} et je viens de réaliser le score ${score} sur le site d'Azertype!`
+	location.href = mailto
+}
+
+
 
 /**
  * Cette fonction lance le jeu.
  * Elle demande à l'utilisateur de choisir entre "mots" et "phrases" et lance la boucle de jeu correspondante
  */
 function launchGame(){
+	
+	//initAddEventListenerPopup()
 	let score = 0;
 	let i = 0;
 	let listeProp = listeMots
@@ -66,6 +88,20 @@ function launchGame(){
 			displayProp(listeProp[i])
 		})
 	}
+
+	let form = document.querySelector("form")
+	form.addEventListener("submit", (event) => {
+		event.preventDefault()
+
+		let baliseNom = document.getElementById("nom")
+		let nom = baliseNom.value
+		let baliseEmail = document.getElementById("email")
+		let email = baliseEmail.value
+
+		let scoreEmail = `${score} / ${i}`
+		displayEmail(nom, email, scoreEmail)
+
+	})
 
 	displayScore(score, i)
 }
