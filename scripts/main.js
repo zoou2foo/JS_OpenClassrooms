@@ -13,4 +13,4 @@
 // let buttons = document.querySelectorAll(".optionSource input")
 // console.log(buttons)
 
-launchGame()
+launchGame();
